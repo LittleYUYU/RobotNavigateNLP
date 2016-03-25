@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js">
+</script>
+<script src="/assets/javascript/my_javascript.js"></script>
+</head>
 <body>
 <p>请输入两个数字</p>
 <form action="/judge/" method="get">
@@ -15,34 +20,8 @@
     <p id="list_result"></p>
 </form>
 
-<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function(){
-      $("#judge").click(function(){
-        var instruction = $("#instruction").val();
-        $.get("/judge/",{'instruction':instruction}, function(ret){
-            $('#result').html(ret)
-        })
-      });
-      $('#dict').click(function(){
-        $.getJSON("{% url 'ajax-dict' %}",function(ret){
-          $.each(ret, function(i,item){
-            $('#dict_result').append(i+' '+item + '<br>');
-        // i 为索引，item为遍历值
-          });
-
-        })
-      })
-      $('#list').click(function(){
-          $.getJSON("{% url 'ajax-list' %}",function(ret){
-            //返回值 ret 在这里是一个列表
-            for (var i = ret.length - 1; i >= 0; i--) {
-              // 把 ret 的每一项显示在网页上
-              $('#list_result').append(' ' + ret[i])
-            };
-          })
-      })
-    });
-</script>
+<button type="button" id='show'>show map</button>
+<br/>
+<canvas id="map" ></canvas>
 </body>
 </html>

@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from Implement import settings
 
 # from django.conf.urls.defaults import *
 from Implement.views import current_datetime
@@ -17,4 +18,5 @@ urlpatterns = patterns('',
     url(r'^judge/$', 'Implement.views.judge', name='judge'),
     url(r'^ajax_dict/$', 'Implement.views.ajax_dict', name='ajax-dict'),
     url(r'^ajax_list/$', 'Implement.views.ajax_list', name='ajax-list'),
+    url(r'^assets/(?P<path>.*)','django.views.static.serve',{'document_root':settings.ASSETS_URL}),
 )
