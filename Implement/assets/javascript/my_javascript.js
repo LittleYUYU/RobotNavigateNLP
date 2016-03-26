@@ -2,9 +2,55 @@
  * Created by eric on 3/24/16.
  */
 
+function draw_rect(x, y){
+    var context = $("#map")[0].getContext("2d");
+    context.fillStyle='#FF000';
+    context.strokeRect(x*30-400, y*30-400, 10, 10);
+}
+
+function draw_edge(node1, node2){
+    
+    context.fillStyle='#FF000';
+    context.strokeRect(x*30-400, y*30-400, 10, 10);
+}
+
 $(document).ready(function(){
     $.get('assets/maps/map_one.xml', function (d) {
+
+
         var $map = $(d).find('map');
+        var nodes = $(d).find('node');
+//        var canvas=document.getElementById('map');
+        var canvas = $("#map")[0];
+        var ctx=canvas.getContext('2d');
+        ctx.fillStyle='#FF0000';
+        n = $(d).find("node").first();
+//        ctx.fillRect(n.attr("x"), n.attr("y"),100,100);
+//        ctx.strokeRect(240, 120, 100, 100);
+//        nodes.each(function(){
+//            var node = $(this);
+//            node.attr("x", node.attr("x")*30-400);
+//            node.attr("y", node.attr("y")*30-400);
+//        });
+        nodes.each(function(){
+            var node = $(this);
+            $("#node").append(node.attr("x"), ' ');
+//            ctx.beginPath();
+//            ctx.arc(70,18,15,0,Math.PI*2,true);
+//            ctx.closePath();
+            draw_rect(node.attr("x"),node.attr("y"));
+        });
+        $("#node").append('<br>')
+        nodes.each(function(){
+            var node = $(this);
+            $("#node").append(node.attr("y"), ' ');
+        });
+
+        var edges = $(d).find("edge");
+        edges.each(function(){
+
+        });
+//        alert(node.attr("y"));
         var $nodes = $map.find('nodes');
         $nodes.each(function() {
             var $node = $(this);
@@ -15,7 +61,7 @@ $(document).ready(function(){
             var canvas=document.getElementById('map');
             var ctx=canvas.getContext('2d');
             ctx.fillStyle='#FF0000';
-            ctx.fillRect(0,0,80,100);
+            ctx.fillRect(0,0,40,60);
         });
         $(d).find('book').each(function () {
             var $book = $(this);
