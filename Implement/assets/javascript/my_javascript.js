@@ -5,13 +5,19 @@
 function draw_rect(x, y){
     var context = $("#map")[0].getContext("2d");
     context.fillStyle='#FF000';
-    context.strokeRect(x*30-400, y*30-400, 10, 10);
+    context.strokeRect(x*30-405, y*30-405, 10, 10);
 }
 
 function draw_edge(node1, node2){
-    
+    var context = $("#map")[0].getContext("2d");
+    x1 = node1.split(",")[0]*30-400;
+    y1 = node1.split(",")[1]*30-400;
+    x2 = node2.split(",")[0]*30-400;
+    y2 = node2.split(",")[1]*30-400;
     context.fillStyle='#FF000';
-    context.strokeRect(x*30-400, y*30-400, 10, 10);
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
 }
 
 $(document).ready(function(){
@@ -25,21 +31,14 @@ $(document).ready(function(){
         var ctx=canvas.getContext('2d');
         ctx.fillStyle='#FF0000';
         n = $(d).find("node").first();
-//        ctx.fillRect(n.attr("x"), n.attr("y"),100,100);
-//        ctx.strokeRect(240, 120, 100, 100);
-//        nodes.each(function(){
-//            var node = $(this);
-//            node.attr("x", node.attr("x")*30-400);
-//            node.attr("y", node.attr("y")*30-400);
-//        });
+
         nodes.each(function(){
             var node = $(this);
             $("#node").append(node.attr("x"), ' ');
-//            ctx.beginPath();
-//            ctx.arc(70,18,15,0,Math.PI*2,true);
-//            ctx.closePath();
             draw_rect(node.attr("x"),node.attr("y"));
         });
+
+
         $("#node").append('<br>')
         nodes.each(function(){
             var node = $(this);
@@ -48,7 +47,7 @@ $(document).ready(function(){
 
         var edges = $(d).find("edge");
         edges.each(function(){
-
+            draw_edge($(this).attr("node1"), $(this).attr("node2"));
         });
 //        alert(node.attr("y"));
         var $nodes = $map.find('nodes');
