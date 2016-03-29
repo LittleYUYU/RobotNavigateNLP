@@ -7,23 +7,26 @@
 <script src="/assets/javascript/my_javascript.js"></script>
 </head>
 <body>
-<p>请输入两个数字</p>
+<p>Where you want to go</p>
+<edge node1="19,23" node2="19,24" wall="fish" floor="concrete"></edge>
 <form action="/judge/" method="get">
     instruct: <input type="text" id="instruction" name="instruction"> <br>
 
     <p>result: <span id='result'></span></p>
     <button type="button" id='judge'>submit</button>
 
-    <div id="dict">Ajax 加载字典</div>
-    <p id="dict_result"></p>
 
-    <div id="list">Ajax 加载列表</div>
-    <p id="list_result"></p>
 </form>
 
-<button type="button" id='show'>show map</button>
+
+<select id="map_select">
+  <option value ="map_one">map_one</option>
+  <option value ="map_jelly">map_jelly</option>
+  <option value="map_grid">map_grid</option>
+</select>
 <br/>
-<div id="node"></div>
-<canvas id="map" height="800" width="800" ></canvas>
+<img src="/assets/images/signs.png"/>
+<canvas id="map" height="400" width="400" ></canvas>
+
 </body>
 </html>
