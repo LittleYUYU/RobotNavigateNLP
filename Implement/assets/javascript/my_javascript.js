@@ -27,6 +27,7 @@ color_dict = {  "blue"      :"60b5e6",
                 "tower"     :"d7926b",
                 "butterfly" :"66cbdd",
                 "fish"      :"ee37a1"};
+
 function draw_edge(edge){
     node1 = edge.attr("node1");
     node2 = edge.attr("node2");
@@ -74,24 +75,20 @@ function draw_map(map_name){
     });
 }
 
+function get_vector(map_name, x, y, d) {
+    $.get('assets/maps/' + map_name + '.xml', function (d) {
+
+        var nodes = $(d).find('node');
+
+//        return nodes;
+//        return nodes.find("[x='1']");
+        alert(nodes.filterByData('x', '1').length);
+        return nodes.data('x', '1');
+    });
+}
+
 $(document).ready(function(){
-//    $.get('assets/maps/map_one.xml', function (d) {
-//        var $map = $(d).find('map');
-//        var nodes = $(d).find('node');
-//
-//        // draw edges
-//        var edges = $(d).find("edge");
-//        edges.each(function(){
-//            draw_edge($(this));
-//        });
-//
-//        // draw nodes
-//        nodes.each(function(){
-//            var node = $(this);
-//            draw_rect(node.attr("x"),node.attr("y"));
-//        });
-//
-//    });
+
     draw_map("map_one");
 
     $("#map_select").change(function(){
