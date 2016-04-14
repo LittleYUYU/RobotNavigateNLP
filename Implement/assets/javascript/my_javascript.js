@@ -156,13 +156,14 @@ function get_matrix_of(map_name) {
 //            matrix.append('[');
             for (k = 0; k < 4; k++) {
 //                matrix.append('[');
-                get_vector(map_name, i, j, k);
+                get_vector(map_name, i, j, k*90);
 //                matrix.append(']');
             }
 //            matrix.append(']');
         }
 //        matrix.append(']');
     }
+//    matrix.append("end of loop");
 }
 
 $(document).ready(function(){

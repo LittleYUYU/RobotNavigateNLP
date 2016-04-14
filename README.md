@@ -15,3 +15,11 @@ Understand data set | Qi Zhu  | Mar 5
 - input: [x0, y0, d0], operation (0 = no action, 1 = go forward, 2 = turn right, 3 = turn left, 4 = turn back)
 - output: [x1, y1, d1]
 - if there is no way ahead, return null
+
+## How to use map
+```
+import map // at the directory of matrix
+map.map_grid
+map.map_jelly
+map.map_one
+```
