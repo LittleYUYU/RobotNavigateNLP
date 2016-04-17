@@ -33,13 +33,7 @@ face the octagon carpet | 3 | (3, 5, 1), (3, 5, 2) | map0
 - [x, y, d] = object(6 * 自前后左右), floor + wall(11 * 前后左右) 
 - Update: make a 3d matrix for each map of shape [sizeOfX, sizeOfY, 4]. Each element is a 74d vector(implemented with python list). If (x, y, d) doesn't exist in the map, output a zero vector with the same length.
 
-<!--## function
-
-- input: [x0, y0, d0], operation (0 = no action, 1 = go forward, 2 = turn right, 3 = turn left, 4 = turn back)
-- output: [x1, y1, d1]
-- if there is no way ahead, return null
--->
-<!--## How to use matrix
+### How to use matrix
 
 ```
 cd matrix
@@ -51,5 +45,12 @@ map.map_jelly
 map.map_one
 ```
 
-Update: cancel this function. See "matrix".-->
+
+<!--## function
+
+- input: [x0, y0, d0], operation (0 = no action, 1 = go forward, 2 = turn right, 3 = turn left, 4 = turn back)
+- output: [x1, y1, d1]
+- if there is no way ahead, return null
+-->
+
 
