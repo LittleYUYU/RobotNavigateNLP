@@ -29,24 +29,24 @@ color_dict = {  "blue"      :"60b5e6",
                 "fish"      :"ee37a1"};
 
 mark = {
-    ""          :"000000",
-    "barstool"  :"100000",
-    "chair"     :"010000",
-    "easel"     :"001000",
-    "hatrack"   :"000100",
-    "lamp"      :"000010",
-    "sofa"      :"000001",
-    "blue"      :"10000000",
-    "brick"     :"01000000",
-    "concrete"  :"00100000",
-    "flower"    :"00010000",
-    "grass"     :"00001000",
-    "gravel"    :"00000100",
-    "wood"      :"00000010",
-    "yellow"    :"00000001",
-    "tower"     :"100",
-    "butterfly" :"010",
-    "fish"      :"001"};
+    ""          :"0,0,0,0,0,0,",
+    "barstool"  :"1,0,0,0,0,0,",
+    "chair"     :"0,1,0,0,0,0,",
+    "easel"     :"0,0,1,0,0,0,",
+    "hatrack"   :"0,0,0,1,0,0,",
+    "lamp"      :"0,0,0,0,1,0,",
+    "sofa"      :"0,0,0,0,0,1,",
+    "blue"      :"1,0,0,0,0,0,0,0,",
+    "brick"     :"0,1,0,0,0,0,0,0,",
+    "concrete"  :"0,0,1,0,0,0,0,0,",
+    "flower"    :"0,0,0,1,0,0,0,0,",
+    "grass"     :"0,0,0,0,1,0,0,0,",
+    "gravel"    :"0,0,0,0,0,1,0,0,",
+    "wood"      :"0,0,0,0,0,0,1,0,",
+    "yellow"    :"0,0,0,0,0,0,0,1,",
+    "tower"     :"1,0,0,",
+    "butterfly" :"0,1,0,",
+    "fish"      :"0,0,1,"};
 
 function draw_edge(edge){
     node1 = edge.attr("node1");
@@ -107,16 +107,16 @@ function get_vector(map_name, x, y, dir) {
         //node
         //self
         var node = $(d).find('node[x=' + x + '][y=' + y + ']');
-        result += node.size() == 1 ? mark[node.attr("item")] : "000000";
-        result += ',';
-        alert(node.size());
+        result += node.size() == 1 ? mark[node.attr("item")] : "0,0,0,0,0,0,";
+//        result += ',';
+//        alert(node.size());
 
         for (i = 0; i < 4; i++) {
         // nodes in four directions
             node = $(d).find('node[x=' + (parseInt(x) + directions[dir/90][i][0]) + ']' +
                              '[y=' + (parseInt(y) + directions[dir/90][i][1]) + ']');
 //            result += node.size() == 1 ? mark[node.attr("item")] : "000000";
-            node1 = x + ',' + y;
+            node1 = x + y;
             node2 = (parseInt(x) + directions[dir/90][i][0]) + ',' + (parseInt(y) + directions[dir/90][i][1]);
             edge = $(d).find('edge[node1="' + node1 + '"][node2="' + node2 + '"]');
             if (edge.size() == 0) {
@@ -126,8 +126,8 @@ function get_vector(map_name, x, y, dir) {
                 result += mark[node.attr("item")];
             }
             else
-                result += "000000";
-            result += ',';
+                result += "0,0,0,0,0,0,";
+//            result += ',';
         }
 
         for (i = 0; i < 4; i++) {
@@ -138,9 +138,9 @@ function get_vector(map_name, x, y, dir) {
                 edge = $(d).find('edge[node1="' + node2 + '"][node2="' + node1 + '"]');
             }
 
-            result += edge.size() == 1 ? mark[edge.attr("floor")] : "00000000";
-            result += edge.size() == 1 ? mark[edge.attr("wall")] : "000";
-            result += ',';
+            result += edge.size() == 1 ? mark[edge.attr("floor")] : "0,0,0,0,0,0,0,0,";
+            result += edge.size() == 1 ? mark[edge.attr("wall")] : "0,0,0,";
+
         }
         $("#matrix").append('[').append(result).append('],<br/>');
 //        $("#matrix").append(result);
@@ -150,9 +150,9 @@ function get_vector(map_name, x, y, dir) {
 
 function get_matrix_of(map_name) {
     var matrix = $("#matrix");
-    for (i = 0; i <24; i++) {
+    for (i = 0; i <25; i++) {
 //        matrix.append('[');
-        for (j = 0; j < 24; j++) {
+        for (j = 0; j < 25; j++) {
 //            matrix.append('[');
             for (k = 0; k < 4; k++) {
 //                matrix.append('[');

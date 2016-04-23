@@ -26,7 +26,7 @@
       <file leaf-file-name="my_javascript.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assets/javascript/my_javascript.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="166" column="1" selection-start="5628" selection-end="5628" vertical-scroll-proportion="-4.269231" vertical-offset="2379" max-vertical-offset="3135">
+            <state line="90" column="30" selection-start="2931" selection-end="2931" vertical-scroll-proportion="-10.923077" vertical-offset="1066" max-vertical-offset="3135">
               <folding />
             </state>
           </provider>
@@ -35,16 +35,16 @@
       <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Implement/templates/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="0" selection-start="903" selection-end="903" vertical-scroll-proportion="-12.583333" vertical-offset="193" max-vertical-offset="630">
+            <state line="33" column="0" selection-start="903" selection-end="903" vertical-scroll-proportion="0.0" vertical-offset="193" max-vertical-offset="630">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="map_grid.xml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="map_grid.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assets/maps/map_grid.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="38" selection-start="349" selection-end="349" vertical-scroll-proportion="0.45592704" vertical-offset="0" max-vertical-offset="1185">
+            <state line="19" column="31" selection-start="654" selection-end="654" vertical-scroll-proportion="-11.875" vertical-offset="0" max-vertical-offset="1185">
               <folding />
             </state>
           </provider>
@@ -53,16 +53,16 @@
       <file leaf-file-name="map_jelly.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assets/maps/map_jelly.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="35" selection-start="946" selection-end="951" vertical-scroll-proportion="-2.5" vertical-offset="345" max-vertical-offset="1350">
+            <state line="27" column="35" selection-start="946" selection-end="951" vertical-scroll-proportion="-16.875" vertical-offset="0" max-vertical-offset="1350">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="map_one.xml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="map_one.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/assets/maps/map_one.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="33" selection-start="168" selection-end="168" vertical-scroll-proportion="6.875" vertical-offset="240" max-vertical-offset="1275">
+            <state line="34" column="24" selection-start="1190" selection-end="1190" vertical-scroll-proportion="0.41033435" vertical-offset="375" max-vertical-offset="1275">
               <folding />
             </state>
           </provider>
@@ -71,7 +71,7 @@
       <file leaf-file-name="views.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Implement/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="19" selection-start="794" selection-end="794" vertical-scroll-proportion="0.0" vertical-offset="123" max-vertical-offset="720">
+            <state line="29" column="19" selection-start="794" selection-end="794" vertical-scroll-proportion="0.0" vertical-offset="169" max-vertical-offset="720">
               <folding />
             </state>
           </provider>
@@ -186,7 +186,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -289,6 +288,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -398,27 +398,7 @@
       <option name="PARAMETERS" value="" />
       <method />
     </configuration>
-    <configuration default="true" type="Python.DjangoServer" factoryName="Django server">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Implement" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <option name="port" value="8000" />
-      <option name="host" value="" />
-      <option name="additionalOptions" value="" />
-      <option name="browserUrl" value="" />
-      <option name="runTestServer" value="false" />
-      <option name="runNoReload" value="false" />
-      <option name="useCustomRunCommand" value="false" />
-      <option name="customRunCommand" value="" />
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
@@ -444,7 +424,27 @@
       <option name="USE_PARAM" value="false" />
       <method />
     </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+    <configuration default="true" type="Python.DjangoServer" factoryName="Django server">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Implement" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Doctests">
@@ -537,7 +537,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29162833" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2971481" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32392028" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -545,11 +545,11 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32781458" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -567,9 +567,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26770929" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3294702" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3294702" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -589,6 +589,55 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/assets/javascript/my_javascript.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="166" column="1" selection-start="5628" selection-end="5628" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3135">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Implement/templates/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="0" selection-start="903" selection-end="903" vertical-scroll-proportion="0.0" vertical-offset="193" max-vertical-offset="630">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/maps/map_grid.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="38" selection-start="349" selection-end="349" vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="1185">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/maps/map_jelly.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="35" selection-start="946" selection-end="951" vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="1350">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/maps/map_one.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="33" selection-start="168" selection-end="168" vertical-scroll-proportion="0.0" vertical-offset="240" max-vertical-offset="1275">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Implement/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="19" selection-start="794" selection-end="794" vertical-scroll-proportion="0.0" vertical-offset="435" max-vertical-offset="765">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Implement/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="16" selection-start="638" selection-end="643" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="420">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/assets/javascript/my_javascript.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="103" column="5" selection-start="3174" selection-end="3174" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1995">
@@ -824,6 +873,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Implement/templates/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="0" selection-start="903" selection-end="903" vertical-scroll-proportion="0.0" vertical-offset="193" max-vertical-offset="630">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/maps/map_jelly.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="35" selection-start="946" selection-end="951" vertical-scroll-proportion="-16.875" vertical-offset="0" max-vertical-offset="1350">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Implement/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="29" column="19" selection-start="794" selection-end="794" vertical-scroll-proportion="0.0" vertical-offset="123" max-vertical-offset="720">
@@ -831,37 +894,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/maps/map_jelly.xml">
+    <entry file="file://$PROJECT_DIR$/assets/maps/map_grid.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="35" selection-start="946" selection-end="951" vertical-scroll-proportion="-2.5" vertical-offset="345" max-vertical-offset="1350">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/maps/map_one.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="33" selection-start="168" selection-end="168" vertical-scroll-proportion="6.875" vertical-offset="240" max-vertical-offset="1275">
+        <state line="19" column="31" selection-start="654" selection-end="654" vertical-scroll-proportion="-11.875" vertical-offset="0" max-vertical-offset="1185">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/assets/javascript/my_javascript.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="166" column="1" selection-start="5628" selection-end="5628" vertical-scroll-proportion="-4.269231" vertical-offset="2379" max-vertical-offset="3135">
+        <state line="90" column="30" selection-start="2931" selection-end="2931" vertical-scroll-proportion="-10.923077" vertical-offset="1066" max-vertical-offset="3135">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Implement/templates/index.html">
+    <entry file="file://$PROJECT_DIR$/assets/maps/map_one.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="0" selection-start="903" selection-end="903" vertical-scroll-proportion="-12.583333" vertical-offset="193" max-vertical-offset="630">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/maps/map_grid.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="38" selection-start="349" selection-end="349" vertical-scroll-proportion="0.45592704" vertical-offset="0" max-vertical-offset="1185">
+        <state line="34" column="24" selection-start="1190" selection-end="1190" vertical-scroll-proportion="0.41033435" vertical-offset="375" max-vertical-offset="1275">
           <folding />
         </state>
       </provider>
