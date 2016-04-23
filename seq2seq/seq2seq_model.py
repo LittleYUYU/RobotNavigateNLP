@@ -85,23 +85,24 @@ class Seq2SeqModel(object):
           decoder_inputs_positions=decoder_inputs_positions,
           decoder_inputs_maps=decoder_inputs_maps, feed_previous=do_decode)
 
+
     # Feeds for inputs.
     self.encoder_inputs = []
     self.decoder_inputs = []
     self.target_weights = []
     self.decoder_inputs_positions = []
     for i in xrange(buckets[-1][0]):  # Last bucket is the biggest one.
-      self.encoder_inputs.append(tf.placeholder(tf.int32, shape=[None],
+      self.encoder_inputs.append(tf.placeholder(tf.int32, shape=[self.batch_size],
                                                 name="encoder{0}".format(i)))
     for i in xrange(buckets[-1][1] + 1):
-      self.decoder_inputs.append(tf.placeholder(tf.int32, shape=[None],
+      self.decoder_inputs.append(tf.placeholder(tf.int32, shape=[self.batch_size],
                                                 name="decoder{0}".format(i)))
-      self.target_weights.append(tf.placeholder(tf.float32, shape=[None],
+      self.target_weights.append(tf.placeholder(tf.float32, shape=[self.batch_size],
                                                 name="weight{0}".format(i)))
-      self.decoder_inputs_positions.append(tf.placeholder(tf.int32, shape=[None, 3],
+      self.decoder_inputs_positions.append(tf.placeholder(tf.int32, shape=[self.batch_size, 3],
                                                 name="position{0}".format(i)))
     
-    self.decoder_inputs_maps = tf.placeholder(tf.int32, shape=[None], name="mapNo")
+    self.decoder_inputs_maps = tf.placeholder(tf.int32, shape=[self.batch_size], name="mapNo")
 
     # Our targets are decoder inputs shifted by one.
     targets = [self.decoder_inputs[i + 1]
@@ -228,7 +229,6 @@ class Seq2SeqModel(object):
     positions = []
     maps = []
 
-    # pdb.set_trace()
     # Get a random batch of encoder and decoder inputs from data,
     # pad them if needed, reverse encoder inputs and add GO to decoder.
     for _ in xrange(self.batch_size):
@@ -242,8 +242,11 @@ class Seq2SeqModel(object):
       decoder_pad_size = decoder_size - len(decoder_input) - 1
       decoder_inputs.append([data_utils.GO_ID] + decoder_input +
                             [data_utils.PAD_ID] * decoder_pad_size)
-      positions.append(pos + [pos[-1]] * decoder_pad_size)
+      pos_pad_size = decoder_size - len(pos)
+      positions.append(pos + [pos[-1]] * pos_pad_size)
       maps.append(mapp)
+
+      # pdb.set_trace()
 
     # Now we create batch-major vectors from the data selected above.
     batch_encoder_inputs, batch_decoder_inputs, batch_weights, batch_decoder_inputs_positions = [], [], [], []
@@ -256,6 +259,7 @@ class Seq2SeqModel(object):
                     for batch_idx in xrange(self.batch_size)], dtype=np.int32))
 
     # Batch decoder inputs are re-indexed decoder_inputs, we create weights.
+    # pdb.set_trace()
     for length_idx in xrange(decoder_size):
       batch_decoder_inputs.append(
           np.array([decoder_inputs[batch_idx][length_idx]
