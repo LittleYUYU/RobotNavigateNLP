@@ -1,24 +1,5 @@
 # Copyright 2015 Google Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
-#
-# This is a slightly modified version of original TensorFlow sample code "data_utils.py".
-# Fit the code for all kinds of pre-processed datasets. 
-# By: Ziyu Yao (ziyuyao123@gmail.com)
-#
-# ==============================================================================
+# Adapted from TensorFlow released code "data_utils.py".
 
 
 """Utilities for process data from different datasets."""
@@ -102,7 +83,7 @@ def create_vocabulary(vocabulary_path, data_path, min_vocabulary_threshold=0,
       counter = 0
       for line in f:
         counter += 1
-        if counter % 100 == 0:
+        if counter % 1000 == 0:
           print("  processing line %d" % counter)
         tokens = tokenizer(line) if tokenizer else basic_tokenizer(line)
         for w in tokens:
@@ -125,8 +106,8 @@ def create_vocabulary(vocabulary_path, data_path, min_vocabulary_threshold=0,
           vocab_file.write(w + "\n")
 
     # return size of vocabulary
-    print ("Vocabulary size: %s" % len(vocab))
-    return len(vocab)
+    print ("Vocabulary size: %s" % len(vocab_list))
+    return len(vocab_list)
   # vocabulary exists
   else:
     print ("Vocabulary file %s exists, now use the old one." % vocabulary_path)
@@ -270,7 +251,7 @@ def prepare_data(data_dir, srce_vocabulary_min):
 
   # Create vocabularies of the appropriate sizes.
   srce_vocab_path = os.path.join(train_path, "vocab%d.srce" % srce_vocabulary_min)
-  trgt_vocab_path = os.path.join(train_path, "vocab%d.trgt" % trgt_vocabulary_min)
+  trgt_vocab_path = os.path.join(train_path, "vocab.trgt")
   srce_vocab_size = create_vocabulary(srce_vocab_path, train_path + "/data.srce", min_vocabulary_threshold=srce_vocabulary_min)
   # trgt_vocab_size = create_vocabulary(trgt_vocab_path, train_path + "/data.trgt", min_vocabulary_threshold=trgt_vocabulary_min)
   trgt_vocab_size = 9
@@ -278,27 +259,21 @@ def prepare_data(data_dir, srce_vocabulary_min):
   # sharing the same vacoabularies for source and target semantic space.
   # Create token ids for the training data.
   srce_train_ids_path = train_path + ("/ids%d.srce" % srce_vocabulary_min)
-  trgt_train_ids_path = train_path + ("/ids%d.trgt" % trgt_vocabulary_min)
+  trgt_train_ids_path = train_path + ("/ids.trgt")
   data_to_token_ids(train_path + "/data.srce", srce_train_ids_path, srce_vocab_path)
   data_to_token_ids(train_path + "/data.trgt", trgt_train_ids_path, trgt_vocab_path)
 
   # Create token ids for the development data.
   srce_dev_ids_path = dev_path + ("/ids%d.srce" % srce_vocabulary_min)
-  trgt_dev_ids_path = dev_path + ("/ids%d.trgt" % trgt_vocabulary_min)
+  trgt_dev_ids_path = dev_path + ("/ids.trgt")
   data_to_token_ids(dev_path + "/data.srce", srce_dev_ids_path, srce_vocab_path)
   data_to_token_ids(dev_path + "/data.trgt", trgt_dev_ids_path, trgt_vocab_path)
 
   # positions
   trgt_train_positions_path = os.path.join(train_path, "positions.trgt")
-  trgt_train_maps_path = os.path.join(train_path, "maps.trgt")
+  trgt_train_maps_path = os.path.join(train_path, "map.srce")
   trgt_dev_positions_path = os.path.join(dev_path, "positions.trgt")
-  trgt_dev_maps_path = os.path.join(dev_path, "maps.trgt")
-
-  # # Create token ids for the testing data.
-  # srce_test_ids_path = test_path + ("/ids%d.srce" % srce_vocabulary_min)
-  # trgt_test_ids_path = test_path + ("/ids%d.trgt" % trgt_vocabulary_min)
-  # data_to_token_ids(test_path + "/data.srce", srce_test_ids_path, srce_vocab_path)
-  # data_to_token_ids(test_path + "/data.trgt", trgt_test_ids_path, trgt_vocab_path)
+  trgt_dev_maps_path = os.path.join(dev_path, "map.srce")
 
   return (srce_train_ids_path, trgt_train_ids_path, trgt_train_positions_path, trgt_train_maps_path,
           srce_dev_ids_path, trgt_dev_ids_path, trgt_dev_positions_path, trgt_dev_maps_path,

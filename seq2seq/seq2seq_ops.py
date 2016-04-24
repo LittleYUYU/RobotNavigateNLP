@@ -158,7 +158,9 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
         new_pos = position 
         for j in xrange(batch_size):
           new_env.append(array_ops.reshape(
-            array_ops.slice(mapIdx, array_ops.pack([mapNo[j], position[j,0], position[j,1], position[j,2], 0]), [1,1,1,1,-1]), [state_size]))
+            array_ops.slice(mapIdx, array_ops.pack([mapNo[j], position[j,0], position[j,1], position[j,2], 0]), [1,1,1,1,state_size]), [state_size]))
+          # new_env.append(array_ops.reshape(
+          #   array_ops.slice(mapIdx, array_ops.pack([mapNo[j], position[j][0], position[j][1], position[j][2], 0]), [1,1,1,1,-1]), [state_size]))
         new_env = array_ops.reshape(array_ops.pack(new_env), [batch_size, state_size])
         return new_pos, new_env
       else:
