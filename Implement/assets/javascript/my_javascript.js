@@ -3,7 +3,7 @@
  */
 
 function draw_rect(node){
-    var d = $("select option:selected")[0].value == "map_grid" ? 0 : 406;
+    var d = $("#map_select")[0].value == "map_grid" ? 0 : 406;
     x = node.attr("x")*30-d;
     y = node.attr("y")*30-d;
     var context = $("#map")[0].getContext("2d");
@@ -16,6 +16,34 @@ function draw_rect(node){
     context.fillStyle = "black";
     context.fillText(node.attr("item")[0] == null ? " " : node.attr("item")[0].toUpperCase(), x+3, y+10);
 }
+
+function draw_arrow(x, y) {
+    $("#start")[0].innerText = x +","+  y;
+    canvas = $("#map")[0];
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    map_name = $("#map_select")[0].value;
+    draw_map(map_name);
+    var d = map_name == "map_grid" ? 0 : 406;
+    x = x * 30 - d - 9;
+    y = y * 30 - d - 24;
+    //Loading of the home test image - img1
+    var img1 = new Image();
+
+
+    //drawing of the test image - img1
+    img1.onload = function () {
+        //draw background image
+        ctx.drawImage(img1, x, y, 30, 30);
+
+        //draw a box over the top
+        // ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
+        // ctx.fillRect(0, 0, 500, 500);
+    };
+
+    img1.src = 'assets/images/pin.png';
+}
+
 color_dict = {  "blue"      :"60b5e6",
                 "brick"     :"b32723",
                 "concrete"  :"918f90",
@@ -52,7 +80,7 @@ function draw_edge(edge){
     node1 = edge.attr("node1");
     node2 = edge.attr("node2");
     var context = $("#map")[0].getContext("2d");
-    var d = $("select option:selected")[0].value == "map_grid" ? -6 : 400;
+    var d = $("#map_select")[0].value == "map_grid" ? -6 : 400;
     x1 = node1.split(",")[0]*30-d;
     y1 = node1.split(",")[1]*30-d;
     x2 = node2.split(",")[0]*30-d;
@@ -94,11 +122,11 @@ function draw_map(map_name){
         });
     });
 }
-
+var map_xml;
 function get_vector(map_name, x, y, dir) {
     $.get('assets/maps/' + map_name + '.xml', function (d) {
         var result = "";
-
+        map_xml = d;
         directions = [[[1, 0], [-1, 0], [0, -1], [0, 1]], //0
                       [[0, -1], [0, 1], [-1, 0], [1, 0]], //90
                       [[-1, 0], [1, 0], [0, 1], [-1, 0]], //180
@@ -166,18 +194,47 @@ function get_matrix_of(map_name) {
 //    matrix.append("end of loop");
 }
 
+function getPosition(event)
+{
+    var x = event.x;
+    var y = event.y;
+
+    var canvas = $("#map")[0];
+    x -= canvas.offsetLeft - document.body.scrollLeft;
+    y -= canvas.offsetTop - document.body.scrollTop;
+    map_name = $("#map_select")[0].value;
+    var d = map_name == "map_grid" ? 0 : 406;
+    x = parseInt((x+d)/30);
+    y = parseInt((y+d)/30);
+
+    $.get('assets/maps/' + map_name + '.xml', function (d) {
+        var node = $(d).find('node[x=' + x + '][y=' + y + ']');
+        if (node.size() == 0) {
+            alert("start point invalid!");
+        }
+        else {
+            draw_arrow(x, y);
+        }
+    });
+
+}
+
 $(document).ready(function(){
 
     draw_map("map_one");
+    var canvas = $("#map")[0];
+    canvas.addEventListener("mousedown", getPosition, false);
 
     $("#map_select").change(function(){
+        $("#start")[0].innerText = "?,?";
         var canvas = $("canvas")[0];
         var context = $("#map")[0].getContext("2d");
         context.clearRect(0, 0, canvas.width, canvas.height);
-        draw_map($("select option:selected")[0].value);
+        draw_map($("#map_select")[0].value);
     });
 
     $("#judge").click(function(){
+        var start_point = $("#start")[0].innerText.split(',');
         var instruction = $("#instruction").val();
         $.get("/judge/",{'instruction':instruction}, function(ret){
             $('#result').html(ret)
