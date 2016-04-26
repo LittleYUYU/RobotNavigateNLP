@@ -29,15 +29,15 @@ UNK_ID = 3
 # action id
 _NO = "0"
 _MOVE = "1"
-_RIGHT = "2"
-_LEFT = "3"
+_LEFT = "2"
+_RIGHT = "3"
 _BACK = "4"
-_ACTION_VOCAB = [_NO, _MOVE, _RIGHT, _LEFT, _BACK]
+_ACTION_VOCAB = [_NO, _MOVE, _LEFT, _RIGHT, _BACK]
 
 noAct_ID = 4
 moveAct_ID = 5
-turnRight_ID = 6
-turnLeft_ID = 7
+turnLeft_ID = 6
+turnRight_ID = 7
 turnBack_ID = 8
 
 # Regular expressions used to tokenize.
@@ -222,12 +222,13 @@ def data_to_token_ids(data_path, target_path, vocabulary_path,
           tokens_file.write(" ".join([str(tok) for tok in token_ids]) + "\n")
 
 
-def prepare_data(data_dir, srce_vocabulary_min):
+def prepare_data(data_dir, srce_vocabulary_min, trgt_vocabulary_min):
   """Get GEO data into data_dir, create vocabularies and tokenize data.
 
   Args:
     data_dir: directory in which the data sets will be stored.
-    srce_vocabulary_min: threshold for droping less-frequent words in source dictionary
+    srce_vocabulary_min: threshold for droping less-frequent words in source dictionary.
+    trgt_vocabulary_min: threshold for dropping less-frequent words in target dictionary.
 
   Returns:
     A tuple of 6 elements:
@@ -251,7 +252,7 @@ def prepare_data(data_dir, srce_vocabulary_min):
 
   # Create vocabularies of the appropriate sizes.
   srce_vocab_path = os.path.join(train_path, "vocab%d.srce" % srce_vocabulary_min)
-  trgt_vocab_path = os.path.join(train_path, "vocab.trgt")
+  trgt_vocab_path = os.path.join(train_path, "vocab%d.trgt" % trgt_vocabulary_min)
   srce_vocab_size = create_vocabulary(srce_vocab_path, train_path + "/data.srce", min_vocabulary_threshold=srce_vocabulary_min)
   # trgt_vocab_size = create_vocabulary(trgt_vocab_path, train_path + "/data.trgt", min_vocabulary_threshold=trgt_vocabulary_min)
   trgt_vocab_size = 9
@@ -259,13 +260,13 @@ def prepare_data(data_dir, srce_vocabulary_min):
   # sharing the same vacoabularies for source and target semantic space.
   # Create token ids for the training data.
   srce_train_ids_path = train_path + ("/ids%d.srce" % srce_vocabulary_min)
-  trgt_train_ids_path = train_path + ("/ids.trgt")
+  trgt_train_ids_path = train_path + ("/ids%d.trgt" % trgt_vocabulary_min)
   data_to_token_ids(train_path + "/data.srce", srce_train_ids_path, srce_vocab_path)
   data_to_token_ids(train_path + "/data.trgt", trgt_train_ids_path, trgt_vocab_path)
 
   # Create token ids for the development data.
   srce_dev_ids_path = dev_path + ("/ids%d.srce" % srce_vocabulary_min)
-  trgt_dev_ids_path = dev_path + ("/ids.trgt")
+  trgt_dev_ids_path = dev_path + ("/ids%d.trgt" % trgt_vocabulary_min)
   data_to_token_ids(dev_path + "/data.srce", srce_dev_ids_path, srce_vocab_path)
   data_to_token_ids(dev_path + "/data.trgt", trgt_dev_ids_path, trgt_vocab_path)
 

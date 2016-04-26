@@ -15,6 +15,7 @@ from __future__ import division
 from __future__ import print_function
 
 from six.moves import xrange  # pylint: disable=redefined-builtin
+import numpy as np
 
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
@@ -29,7 +30,7 @@ from tensorflow.python.ops import sparse_ops
 from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import variable_scope as vs
 
-import map
+import map2
 import data_utils
 
 import pdb # debug
@@ -98,7 +99,7 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
   with vs.variable_scope(scope or "attention_decoder"):
     attn_length = attention_states.get_shape()[1].value
     attn_size = attention_states.get_shape()[2].value
-    mapIdx = array_ops.pack([map.map_grid, map.map_jelly, map.map_one]) #map
+    mapIdx = array_ops.pack([map2.map_grid, map2.map_jelly, map2.map_one]) #map
 
     attention_vec_size = attn_size # size of query
     states = [initial_state]
@@ -129,7 +130,7 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
           h_attn = math_ops.tanh(term1 + term2 + term3)
         else:
           h_attn = math_ops.tanh(term1 + term2)
-      return h_attn
+      return h_attn, attn_weight
 
 
     def updateEnv(position, step, mapNo):
@@ -158,37 +159,36 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
         new_pos = position 
         for j in xrange(batch_size):
           new_env.append(array_ops.reshape(
-            array_ops.slice(mapIdx, array_ops.pack([mapNo[j], position[j,0], position[j,1], position[j,2], 0]), [1,1,1,1,state_size]), [state_size]))
-          # new_env.append(array_ops.reshape(
-          #   array_ops.slice(mapIdx, array_ops.pack([mapNo[j], position[j][0], position[j][1], position[j][2], 0]), [1,1,1,1,-1]), [state_size]))
+            array_ops.slice(mapIdx, array_ops.pack([mapNo[j], position[j,0], position[j,1], position[j,2], 0]), [1,1,1,1,state_size]),
+             [state_size]))
         new_env = array_ops.reshape(array_ops.pack(new_env), [batch_size, state_size])
         return new_pos, new_env
       else:
         for j in xrange(batch_size):
-          if step[j,0] == np.int32(data_utils.noAct_ID): # no action
+          if step[j] == np.int32(data_utils.noAct_ID): # no action
             new_pos.append(position[j,:])
-          
-          elif step[j,0] == np.int32(data_utils.moveAct_ID): # move forward 1 step
+         
+          elif step[j] == np.int32(data_utils.moveAct_ID): # move forward 1 step
             if position[j,2] == np.int32(0): # 0
-              new_pos.append(position[j,:] + np.array([1, 0, 0]))
-            elif position[j,2] == np.int32(1): # 90
-              new_pos.append(position[j,:] + np.array([0, 1, 0]))
-            elif position[j,2] == np.int32(2): # 180
-              new_pos.append(position[j,:] + np.array([-1, 0, 0]))
-            else: # 270
               new_pos.append(position[j,:] + np.array([0, -1, 0]))
+            elif position[j,2] == np.int32(1): # 90
+              new_pos.append(position[j,:] + np.array([1, 0, 0]))
+            elif position[j,2] == np.int32(2): # 180
+              new_pos.append(position[j,:] + np.array([0, 1, 0]))
+            else: # 270
+              new_pos.append(position[j,:] + np.array([-1, 0, 0]))
             
-          elif step[j,0] == np.int32(data_utils.turnRight_ID): # turn right
-            if position[j,2] == np.int32(0): # direction 0 --> 270
-              new_pos.append(array_ops.pack([position[j,0], position[j,1], np.int32(3)]))
-            else:
-              new_pos.append(position[j,:] + np.array([0, 0, -1]))
-          
-          elif step[j,0] == np.int32(data_utils.turnLeft_ID): # turn left
-            if position[j,2] == np.int32(3):
+          elif step[j] == np.int32(data_utils.turnRight_ID): # turn right
+            if position[j,2] == np.int32(3): # direction 270 --> 0
               new_pos.append(array_ops.pack([position[j,0], position[j,1], np.int32(0)]))
             else:
               new_pos.append(position[j,:] + np.array([0, 0, 1]))
+          
+          elif step[j] == np.int32(data_utils.turnLeft_ID): # turn left
+            if position[j,2] == np.int32(0): # 0 --> 270
+              new_pos.append(array_ops.pack([position[j,0], position[j,1], np.int32(3)]))
+            else:
+              new_pos.append(position[j,:] + np.array([0, 0, -1]))
           
           else: # turn back
             if position[j,2] == np.int32(2):
@@ -199,15 +199,22 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
               new_pos.append(position[j,:] + np.array([0, 0, 2]))
 
           # update environment
-          new_env.append(array_ops.reshape(
-            array_ops.slice(mapIdx, array_ops.pack([mapNo[j], new_pos[-1][0], new_pos[-1][1], new_pos[-1][2], 0]), [1,1,1,1,-1]),[state_size]))
+          if new_pos[-1][0] > 24 or new_pos[-1][1] > 24 or new_pos[-1][0] < 0 or new_pos[-1][1] < 0:
+            new_pos[-1] = position[j, :]
+            new_env.append(env[j, :])
+            # print ("Out of range!")
+          else:
+            new_env.append(array_ops.reshape(
+              array_ops.slice(mapIdx, array_ops.pack([mapNo[j], new_pos[-1][0], new_pos[-1][1], new_pos[-1][2], 0]), [1,1,1,1,state_size]),
+              [state_size]))
         
         new_pos = array_ops.pack(new_pos)
         new_env = array_ops.pack(new_env)
         return new_pos, new_env
 
-    # pdb.set_trace()
     outputs = []
+    attentions = []
+    environments = []
     prev = None
     if decoder_inputs_positions and decoder_inputs_maps and batch_size:
       position = decoder_inputs_positions[0] # 2d tensor of shape [batch_size, 3]
@@ -216,7 +223,8 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
       if i > 0:
         vs.get_variable_scope().reuse_variables()
       inp = decoder_inputs[i]
-      
+      environments.append(env)
+
       # If loop_function is set, we use it instead of decoder_inputs.
       if loop_function is not None and prev is not None:
         with vs.variable_scope("loop_function", reuse=True):
@@ -227,7 +235,8 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
       states.append(new_state)
 
       # Run the attention mechanism.
-      h_attn = attention(cur_output)
+      h_attn, attn_weight = attention(cur_output)
+      attentions.append(attn_weight)
       
       with vs.variable_scope("AttnOutputProjection"):
         output = rnn_cell.linear(h_attn, output_size, False)
@@ -239,6 +248,7 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
       if decoder_inputs_positions[0] and decoder_inputs_maps and position:
         # update current environment
         if loop_function is not None:
+          # pdb.set_trace()
           step = math_ops.argmax(nn_ops.softmax(prev), 1) # step is a list (len=batch_size) of int32 number
           position, env = updateEnv(position, step, decoder_inputs_maps)
         else:
@@ -247,7 +257,7 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
 
       outputs.append(output)
 
-  return outputs, states
+  return outputs, states, attentions, environments
 
 
 def embedding_attention_decoder(decoder_inputs, initial_state, attention_states,
@@ -283,6 +293,8 @@ def embedding_attention_decoder(decoder_inputs, initial_state, attention_states,
     states: The state of each decoder cell in each time-step. This is a list
       with length len(decoder_inputs) -- one item for each time-step.
       Each item is a 2D Tensor of shape [batch_size x cell.state_size].
+    attentions: a list of 2D Tensors of shape [batch_size, cell.state_size].
+    environments: a list of 2D Tensors of shape [batch_size, state_size].
 
   Raises:
     ValueError: when output_projection has the wrong shape.
@@ -303,6 +315,8 @@ def embedding_attention_decoder(decoder_inputs, initial_state, attention_states,
       prev_symbol = array_ops.stop_gradient(math_ops.argmax(prev, 1))
       emb_prev = embedding_ops.embedding_lookup(embedding, prev_symbol)
       return emb_prev
+
+    # beam search 
 
     loop_function = None
     if feed_previous:
@@ -354,9 +368,9 @@ def embedding_attention_seq2seq(encoder_inputs, decoder_inputs, cell,
     states: The state of each decoder cell in each time-step. This is a list
       with length len(decoder_inputs) -- one item for each time-step.
       Each item is a 2D Tensor of shape [batch_size x cell.state_size].
-  
-  Modification:
-    No output projection wrapper used compared to the original version.
+    attentions: a list of 2D Tensors of shape [batch_size, cell.state_size].
+    environments: a list of 2D Tensors of shape [batch_size, state_size].
+
   """
   with vs.variable_scope(scope or "embedding_attention_seq2seq"):
     # Encoder.
@@ -505,6 +519,8 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
     outputs: The outputs for each bucket. Its j'th element consists of a list
       of 2D Tensors of shape [batch_size x num_decoder_symbols] (j'th outputs).
     losses: List of scalar Tensors, representing losses for each bucket.
+    attentions: similar to outputs, with [batch_size, cell.state_size]
+    environments:similar to outputs, with [batch_size, state_size].
   Raises:
     ValueError: if length of encoder_inputsut, targets, or weights is smaller
       than the largest (last) bucket.
@@ -526,6 +542,8 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
 
   losses = []
   outputs = []
+  attentions = []
+  environments = []
   with ops.op_scope(all_inputs, name, "model_with_buckets"):
     for j in xrange(len(buckets)):
       if j > 0:
@@ -539,11 +557,14 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
       bucket_decoder_inputs_maps = decoder_inputs_maps
       
       # pdb.set_trace() #debug
-      bucket_outputs, _ = seq2seq(bucket_encoder_inputs,
+      bucket_outputs, _, bucket_attentions, bucket_environments\
+                        = seq2seq(bucket_encoder_inputs,
                                   bucket_decoder_inputs, 
                                   bucket_decoder_inputs_positions,
                                   bucket_decoder_inputs_maps)
       outputs.append(bucket_outputs)
+      attentions.append(bucket_attentions)
+      environments.append(bucket_environments)
 
       bucket_targets = [targets[i] for i in xrange(buckets[j][1])]
       bucket_weights = [weights[i] for i in xrange(buckets[j][1])]
@@ -553,4 +574,4 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
           outputs[-1], bucket_targets, bucket_weights, num_decoder_symbols,
           softmax_loss_function=softmax_loss_function))
 
-  return outputs, losses
+  return outputs, losses, attentions, environments
