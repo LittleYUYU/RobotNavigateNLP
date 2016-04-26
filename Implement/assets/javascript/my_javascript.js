@@ -144,14 +144,18 @@ function get_vector(map_name, x, y, dir) {
             node = $(d).find('node[x=' + (parseInt(x) + directions[dir/90][i][0]) + ']' +
                              '[y=' + (parseInt(y) + directions[dir/90][i][1]) + ']');
 //            result += node.size() == 1 ? mark[node.attr("item")] : "000000";
-            node1 = x + y;
+//             alert("node:"+node.attr("x")+","+node.attr("y")+"size:"+mark[node.attr("item")]);
+            node1 = x +','+ y;
             node2 = (parseInt(x) + directions[dir/90][i][0]) + ',' + (parseInt(y) + directions[dir/90][i][1]);
+            // alert(node1+'/'+node2);
             edge = $(d).find('edge[node1="' + node1 + '"][node2="' + node2 + '"]');
             if (edge.size() == 0) {
                 edge = $(d).find('edge[node1="' + node2 + '"][node2="' + node1 + '"]');
+                // alert("edge.size() == 0");
             }
             if (node.size() == 1 && edge.size() == 1) {
                 result += mark[node.attr("item")];
+                // alert("node.size() == 1 && edge.size() == 1");
             }
             else
                 result += "0,0,0,0,0,0,";
@@ -254,7 +258,7 @@ $(document).ready(function(){
             for (var i = ret.length - 1; i >= 0; i--) {
                 // 把 ret 的每一项显示在网页上
                 $('#list_result').append(' ' + ret[i])
-            };
+            }
         });
     });
 });
