@@ -123,14 +123,22 @@ function draw_map(map_name){
     });
 }
 var map_xml;
+function test(map_name) {
+    $.get('assets/maps/' + map_name + '.xml', function (data, status) {
+        // $("#xml").html = data;
+        alert(data.text+ status);
+    });
+}
+
 function get_vector(map_name, x, y, dir) {
     $.get('assets/maps/' + map_name + '.xml', function (d) {
         var result = "";
         map_xml = d;
-        directions = [[[1, 0], [-1, 0], [0, -1], [0, 1]], //0
-                      [[0, -1], [0, 1], [-1, 0], [1, 0]], //90
-                      [[-1, 0], [1, 0], [0, 1], [-1, 0]], //180
-                      [[0, 1], [0, -1], [1, 0], [-1, 0]]]; //270
+        directions = [[[0, -1], [0, 1], [-1, 0], [1, 0]], //up
+                      [[1, 0], [-1, 0], [0, -1], [0, 1]], //right
+                      [[0, 1], [0, -1], [1, 0], [-1, 0]], //down
+                      [[-1, 0], [1, 0], [0, 1], [0, -1]] //left
+                      ];
 
         //node
         //self
@@ -139,12 +147,13 @@ function get_vector(map_name, x, y, dir) {
 //        result += ',';
 //        alert(node.size());
 
+        // get nodes
         for (i = 0; i < 4; i++) {
         // nodes in four directions
             node = $(d).find('node[x=' + (parseInt(x) + directions[dir/90][i][0]) + ']' +
                              '[y=' + (parseInt(y) + directions[dir/90][i][1]) + ']');
 //            result += node.size() == 1 ? mark[node.attr("item")] : "000000";
-//             alert("node:"+node.attr("x")+","+node.attr("y")+"size:"+mark[node.attr("item")]);
+//             alert("node:"+node.attr("x")+","+node.attr("y")+" size:"+mark[node.attr("item")]);
             node1 = x +','+ y;
             node2 = (parseInt(x) + directions[dir/90][i][0]) + ',' + (parseInt(y) + directions[dir/90][i][1]);
             // alert(node1+'/'+node2);
@@ -162,6 +171,7 @@ function get_vector(map_name, x, y, dir) {
 //            result += ',';
         }
 
+        // get edges
         for (i = 0; i < 4; i++) {
             node1 = x + ',' + y;
             node2 = (parseInt(x) + directions[dir/90][i][0]) + ',' + (parseInt(y) + directions[dir/90][i][1]);
@@ -180,6 +190,87 @@ function get_vector(map_name, x, y, dir) {
 //    return result;
 }
 
+function get_vector_2(map_name, x, y, dir) {
+    $.get('assets/maps/' + map_name + '.xml', function (d) {
+        var result = "";
+        map_xml = d;
+        directions = [[[0, -1], [0, 1], [-1, 0], [1, 0]], //up
+                      [[1, 0], [-1, 0], [0, -1], [0, 1]], //right
+                      [[0, 1], [0, -1], [1, 0], [-1, 0]], //down
+                      [[-1, 0], [1, 0], [0, 1], [0, -1]] //left
+                      ];
+
+        //node
+        //self
+        var node = $(d).find('node[x=' + x + '][y=' + y + ']');
+        result += node.size() == 1 ? mark[node.attr("item")] : "0,0,0,0,0,0,";
+//        result += ',';
+//        alert(node.size());
+
+        // get nodes
+        for (i = 0; i < 4; i++) {
+        // nodes in four directions
+            node = $(d).find('node[x=' + (parseInt(x) + directions[dir/90][i][0]) + ']' +
+                             '[y=' + (parseInt(y) + directions[dir/90][i][1]) + ']');
+            node_ = $(d).find('node[x=' + (parseInt(x) + (directions[dir/90][i][0]) * 2) + ']' +
+                             '[y=' + (parseInt(y) + (directions[dir/90][i][1]) * 2) + ']');
+//            result += node.size() == 1 ? mark[node.attr("item")] : "000000";
+//             alert("node:"+node.attr("x")+","+node.attr("y")+" size:"+mark[node.attr("item")]);
+            node1 = x +','+ y;
+            node2 = (parseInt(x) + directions[dir/90][i][0]) + ',' + (parseInt(y) + directions[dir/90][i][1]);
+            node3 = (parseInt(x) + (directions[dir/90][i][0]) * 2) + ',' + (parseInt(y) + (directions[dir/90][i][1] * 2));
+            // alert(node1+'/'+node2 + '/' + node3);
+            edge = $(d).find('edge[node1="' + node1 + '"][node2="' + node2 + '"]');
+            edge2 = $(d).find('edge[node1="' + node2 + '"][node2="' + node3 + '"]');
+            if (edge.size() == 0) {
+                edge = $(d).find('edge[node1="' + node2 + '"][node2="' + node1 + '"]');
+                // alert("edge.size() == 0");
+            }
+            if (edge2.size() == 0) {
+                edge2 = $(d).find('edge[node1="' + node3 + '"][node2="' + node2 + '"]');
+            }
+            if (node.size() == 1 && edge.size() == 1) {
+                result += mark[node.attr("item")];
+                // alert("node.size() == 1 && edge.size() == 1");
+            }
+            else
+                result += "0,0,0,0,0,0,";
+//            result += ',';
+            if (node_.size() == 1 && edge2.size() == 1) {
+                result += mark[node_.attr("item")];
+            }
+            else
+                result += "0,0,0,0,0,0,";
+
+        }
+
+        // get edges
+        for (i = 0; i < 4; i++) {
+            node1 = x + ',' + y;
+            node2 = (parseInt(x) + directions[dir/90][i][0]) + ',' + (parseInt(y) + directions[dir/90][i][1]);
+            node3 = (parseInt(x) + (directions[dir/90][i][0]) * 2) + ',' + (parseInt(y) + (directions[dir/90][i][1] * 2));
+            edge = $(d).find('edge[node1="' + node1 + '"][node2="' + node2 + '"]');
+            edge2 = $(d).find('edge[node1="' + node2 + '"][node2="' + node3 + '"]');
+            if (edge.size() == 0) {
+                edge = $(d).find('edge[node1="' + node2 + '"][node2="' + node1 + '"]');
+            }
+            if (edge2.size() == 0) {
+                edge2 = $(d).find('edge[node1="' + node3 + '"][node2="' + node2 + '"]');
+            }
+
+            result += edge.size() == 1 ? mark[edge.attr("floor")] : "0,0,0,0,0,0,0,0,";
+            result += edge.size() == 1 ? mark[edge.attr("wall")] : "0,0,0,";
+            result += edge2.size() == 1 ? mark[edge2.attr("floor")] : "0,0,0,0,0,0,0,0,";
+            result += edge2.size() == 1 ? mark[edge2.attr("wall")] : "0,0,0,";
+
+
+        }
+        $("#matrix").append('[').append(result).append('],<br/>');
+//        $("#matrix").append(result);
+    });
+//    return result;
+}
+
 function get_matrix_of(map_name) {
     var matrix = $("#matrix");
     for (i = 0; i <25; i++) {
@@ -189,6 +280,24 @@ function get_matrix_of(map_name) {
             for (k = 0; k < 4; k++) {
 //                matrix.append('[');
                 get_vector(map_name, i, j, k*90);
+//                matrix.append(']');
+            }
+//            matrix.append(']');
+        }
+//        matrix.append(']');
+    }
+//    matrix.append("end of loop");
+}
+
+function get_matrix_of_2(map_name) {
+    var matrix = $("#matrix");
+    for (i = 0; i <25; i++) {
+//        matrix.append('[');
+        for (j = 0; j < 25; j++) {
+//            matrix.append('[');
+            for (k = 0; k < 4; k++) {
+//                matrix.append('[');
+                get_vector_2(map_name, i, j, k*90);
 //                matrix.append(']');
             }
 //            matrix.append(']');
