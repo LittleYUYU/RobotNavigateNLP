@@ -19,7 +19,7 @@ face the octagon carpet | (3, 5, -1), (3, 5, 180)
 ### Data preparation
 - Use 0 ~ 4 to represent action "no action", "move forward 1 step", "turn right", "turn left", "turn back" in action sequence. Intial directions are set to 90 degree.
 -  (x, y, d) is the position (x,y) in maps with facial direction d, where d in {0, 1, 2, 3} corresponds to degree direction {0, 90, 180, 270} respectively.
--  Three maps are indexed with number, where 0 = "Grid", 1 = "Jelly", 2 = "One".
+-  Three maps are indexed with number, where 0 = "Grid", 1 = "Jelly", 2 = "L".
 - Processed example:
 
 Instruction | Action sequence | Action positions | Map
@@ -53,4 +53,19 @@ map.map_one
 - if there is no way ahead, return null
 -->
 
+## Train and decode
+### Train
+```
+rm ../data/data0/checkpoint/* # clean existing checkpoint records
+python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --batch_size --data_dir="../data/data0"
+```
 
+### Decode
+#### Interactive decode
+```
+python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --data_dir="../data/data0" --inter_decode=True --batch_size=1
+```
+#### Decode for testing
+```
+python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --data_dir="../data/data0" --decode=True --decode_dev=True(or --decode_test=True) --batch_size=1 --inter_decode_sent="string_of_instruction" --inter_decode_position="[[1,7,2]]" --inter_decode_map=0/1/2
+```
