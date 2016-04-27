@@ -111,13 +111,14 @@ class Seq2SeqModel(object):
 
     # Training outputs and losses.
     if forward_only:
-      self.outputs, self.losses, self.attentions, self.environments = seq2seq.model_with_buckets(
+      self.outputs, self.losses, self.attentions, self.environments, self.positions = seq2seq.model_with_buckets(
           self.encoder_inputs, self.decoder_inputs, targets,
           self.target_weights, buckets, self.target_vocab_size,
           lambda x, y, p, m: seq2seq_f(x, y, p, m, True),
           decoder_inputs_positions=self.decoder_inputs_positions, decoder_inputs_maps=self.decoder_inputs_maps)
     else:
-      self.outputs, self.losses, self.attentions, self.environments = seq2seq.model_with_buckets(
+      self.positions = None
+      self.outputs, self.losses, self.attentions, self.environments, _ = seq2seq.model_with_buckets(
           self.encoder_inputs, self.decoder_inputs, targets,
           self.target_weights, buckets, self.target_vocab_size,
           lambda x, y, p, m: seq2seq_f(x, y, p, m, False),
@@ -203,17 +204,27 @@ class Seq2SeqModel(object):
         output_feed.append(self.attentions[bucket_id][l])
       for l in xrange(decoder_size):
         output_feed.append(self.environments[bucket_id][l])
+      if self.positions:
+        for l in xrange(decoder_size):
+          output_feed.append(self.positions[bucket_id][l])
       
     outputs = session.run(output_feed, input_feed)
 
     if not forward_only:
       # Gradient norm, loss, no outputs, no attentions, no environments, no positions
-      return outputs[1], outputs[2], None, None, None
-    else:
-      # No gradient norm, loss, outputs, attentions, environment
+      return outputs[1], outputs[2], None, None, None, None
+    elif self.positions:
+      # No gradient norm, loss, outputs, attentions, environment, positions
       return None, outputs[0], outputs[1:(1+decoder_size)],  \
         outputs[(1+decoder_size):(1+2*decoder_size)],  \
-        outputs[(1+2*decoder_size):]
+        outputs[(1+2*decoder_size):(1+3*decoder_size)], \
+        outputs[(1+3*decoder_size):]
+    else:
+      # No gradient norm, loss, outputs, attentions, environment, no positions
+      return None, outputs[0], outputs[1:(1+decoder_size)],  \
+        outputs[(1+decoder_size):(1+2*decoder_size)],  \
+        outputs[(1+2*decoder_size):], \
+        None
 
 
   def get_batch(self, data, bucket_id):

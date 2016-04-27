@@ -215,7 +215,7 @@ def data_to_token_ids(data_path, target_path, vocabulary_path,
         counter = 0
         for line in data_file:
           counter += 1
-          if counter % 100 == 0:
+          if counter % 1000 == 0:
             print("  tokenizing line %d" % counter)
           token_ids = sentence_to_token_ids(line, vocab, tokenizer,
                                             normalize_digits)

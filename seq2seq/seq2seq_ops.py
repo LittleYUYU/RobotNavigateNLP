@@ -30,7 +30,7 @@ from tensorflow.python.ops import sparse_ops
 from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import variable_scope as vs
 
-import map2
+import map3
 import data_utils
 
 import pdb # debug
@@ -99,7 +99,7 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
   with vs.variable_scope(scope or "attention_decoder"):
     attn_length = attention_states.get_shape()[1].value
     attn_size = attention_states.get_shape()[2].value
-    mapIdx = array_ops.pack([map2.map_grid, map2.map_jelly, map2.map_one]) #map
+    mapIdx = array_ops.pack([map3.map_grid, map3.map_jelly, map3.map_one]) #map
 
     attention_vec_size = attn_size # size of query
     states = [initial_state]
@@ -122,7 +122,6 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
           term1 = rnn_cell.linear(query, attn_size, False)
         with vs.variable_scope("AttnW2"):
           term2 = rnn_cell.linear(cc, attn_size, False)
-        # pdb.set_trace()
         # environment representation
         if env: # 2D Tensor of shape [batch_size, env_size]
           with vs.variable_scope("Environment"):
@@ -133,7 +132,7 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
       return h_attn, attn_weight
 
 
-    def updateEnv(position, step, mapNo):
+    def updateEnv(_position, _step, _mapNo):
       """ Update env_state according to current position and step.
       Args:
       position: a 2D Tensor of shape [batch_size, 3].
@@ -147,75 +146,93 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
       position: a 2D Tensor of shape [batch_size, 3]
         new position after taking the step based on the position.
       """
-      # pdb.set_trace()
-      if not mapNo:
+      if not _mapNo:
         raise ValueError(" Invalid argument mapNo in updateEnv! ")
-      if not position:
+      if not _position:
         raise ValueError(" Invalid argument position in updateEnv! ")
       new_env = []
       new_pos = []
       # if step == None, take no step and return the environment representations of each position.
-      if not step:
-        new_pos = position 
+      if not _step:
+        new_pos = _position 
         for j in xrange(batch_size):
-          new_env.append(array_ops.reshape(
-            array_ops.slice(mapIdx, array_ops.pack([mapNo[j], position[j,0], position[j,1], position[j,2], 0]), [1,1,1,1,state_size]),
-             [state_size]))
+          vec = array_ops.slice(mapIdx, array_ops.pack([_mapNo[j], _position[j,0], _position[j,1], _position[j,2], 0]), [1,1,1,1,state_size])
+          new_env.append(array_ops.squeeze(vec))
         new_env = array_ops.reshape(array_ops.pack(new_env), [batch_size, state_size])
         return new_pos, new_env
+      
       else:
-        for j in xrange(batch_size):
-          if step[j] == np.int32(data_utils.noAct_ID): # no action
-            new_pos.append(position[j,:])
-         
-          elif step[j] == np.int32(data_utils.moveAct_ID): # move forward 1 step
-            if position[j,2] == np.int32(0): # 0
-              new_pos.append(position[j,:] + np.array([0, -1, 0]))
-            elif position[j,2] == np.int32(1): # 90
-              new_pos.append(position[j,:] + np.array([1, 0, 0]))
-            elif position[j,2] == np.int32(2): # 180
-              new_pos.append(position[j,:] + np.array([0, 1, 0]))
-            else: # 270
-              new_pos.append(position[j,:] + np.array([-1, 0, 0]))
-            
-          elif step[j] == np.int32(data_utils.turnRight_ID): # turn right
-            if position[j,2] == np.int32(3): # direction 270 --> 0
-              new_pos.append(array_ops.pack([position[j,0], position[j,1], np.int32(0)]))
-            else:
-              new_pos.append(position[j,:] + np.array([0, 0, 1]))
-          
-          elif step[j] == np.int32(data_utils.turnLeft_ID): # turn left
-            if position[j,2] == np.int32(0): # 0 --> 270
-              new_pos.append(array_ops.pack([position[j,0], position[j,1], np.int32(3)]))
-            else:
-              new_pos.append(position[j,:] + np.array([0, 0, -1]))
-          
-          else: # turn back
-            if position[j,2] == np.int32(2):
-              new_pos.append(array_ops.pack([position[j,0], position[j,1], np.int32(0)]))
-            elif position[j,2] == np.int32(3):
-              new_pos.append(array_ops.pack([position[j,0], position[j,1], np.int32(1)]))
-            else:
-              new_pos.append(position[j,:] + np.array([0, 0, 2]))
 
-          # update environment
-          if new_pos[-1][0] > 24 or new_pos[-1][1] > 24 or new_pos[-1][0] < 0 or new_pos[-1][1] < 0:
-            new_pos[-1] = position[j, :]
-            new_env.append(env[j, :])
-            # print ("Out of range!")
-          else:
-            new_env.append(array_ops.reshape(
-              array_ops.slice(mapIdx, array_ops.pack([mapNo[j], new_pos[-1][0], new_pos[-1][1], new_pos[-1][2], 0]), [1,1,1,1,state_size]),
+        def f_move(ppos): # move forward 1 step
+          return control_flow_ops.cond(math_ops.equal(ppos[2],0), 
+            lambda:array_ops.pack([ppos[0], ppos[1]-1, ppos[2]]), lambda:control_flow_ops.cond(math_ops.equal(ppos[2],1),
+              lambda:array_ops.pack([ppos[0]+1, ppos[1], ppos[2]]), lambda:control_flow_ops.cond(math_ops.equal(ppos[2],2),
+                lambda:array_ops.pack([ppos[0], ppos[1]+1, ppos[2]]), lambda:array_ops.pack([ppos[0]-1, ppos[1], ppos[2]]))))
+            
+        def f_right(ppos): # turn right
+          return control_flow_ops.cond(math_ops.equal(ppos[2],0),
+            lambda: array_ops.pack([ppos[0],ppos[1], 1]), lambda:control_flow_ops.cond(math_ops.equal(ppos[2],1),
+              lambda: array_ops.pack([ppos[0], ppos[1], 2]), lambda:control_flow_ops.cond(math_ops.equal(ppos[2],2),
+                lambda: array_ops.pack([ppos[0], ppos[1], 3]), lambda: array_ops.pack([ppos[0], ppos[1], 0]))))
+        
+        def f_left(ppos): # turn left
+          return control_flow_ops.cond(math_ops.equal(ppos[2], 0),
+            lambda: array_ops.pack([ppos[0], ppos[1], 3]), lambda: control_flow_ops.cond(math_ops.equal(ppos[2],1),
+              lambda: array_ops.pack([ppos[0], ppos[1], 0]), lambda:control_flow_ops.cond(math_ops.equal(ppos[2],2),
+                lambda:array_ops.pack([ppos[0], ppos[1], 1]), lambda:array_ops.pack([ppos[0],ppos[1],2]))))
+        
+        def f_back(ppos): # turn back
+          return control_flow_ops.cond(math_ops.equal(ppos[2],0),
+            lambda:array_ops.pack([ppos[0], ppos[1], 2]), lambda:control_flow_ops.cond(math_ops.equal(ppos[2],1),
+              lambda:array_ops.pack([ppos[0], ppos[1], 3]), lambda: control_flow_ops.cond(math_ops.equal(ppos[2],2),
+                lambda:array_ops.pack([ppos[0], ppos[1], 0]), lambda:array_ops.pack([ppos[0], ppos[1], 1]))))
+
+        def ffn4(sstep, ppos): 
+          return control_flow_ops.cond(math_ops.equal(sstep, data_utils.turnBack_ID),
+          lambda:f_back(ppos), lambda:_position[j,:])
+
+        def ffn3(sstep, ppos): 
+          return control_flow_ops.cond(math_ops.equal(sstep, data_utils.turnLeft_ID),
+          lambda:f_left(ppos), lambda:ffn4(sstep, ppos))
+
+        def ffn2(sstep, ppos): 
+          return control_flow_ops.cond(math_ops.equal(sstep, data_utils.turnRight_ID),
+          lambda:f_right(ppos), lambda:ffn3(sstep, ppos))
+
+        def ffn1(sstep, ppos): 
+          return control_flow_ops.cond(math_ops.equal(sstep, data_utils.moveAct_ID),
+          lambda:f_move(ppos), lambda:ffn2(sstep, ppos))
+
+
+        for j in xrange(batch_size):
+          #update position
+          temp_pos = control_flow_ops.cond(math_ops.equal(_step[j], data_utils.noAct_ID),
+            lambda:_position[j,:], lambda:ffn1(_step[j], _position[j,:]))
+          new_pos.append(control_flow_ops.cond(math_ops.logical_or(math_ops.greater(temp_pos[0], 24),
+            math_ops.logical_or(math_ops.greater(temp_pos[1], 24),
+              math_ops.logical_or(math_ops.less(temp_pos[0], 0), math_ops.less(temp_pos[1],0)))),
+            lambda:_position[j,:], lambda:temp_pos))
+          # new_pos.append(temp_pos)
+
+          # update env
+          new_env.append(array_ops.reshape(
+              array_ops.slice(mapIdx, array_ops.pack([_mapNo[j], new_pos[-1][0], new_pos[-1][1], new_pos[-1][2], 0]), [1,1,1,1,state_size]),
               [state_size]))
         
         new_pos = array_ops.pack(new_pos)
         new_env = array_ops.pack(new_env)
         return new_pos, new_env
+        # return new_pos, None
 
     outputs = []
     attentions = []
     environments = []
+    positions = []
     prev = None
+
+    # print(" Action info: no act=%d, move=%d, turn left=%d, turn right=%d, turn back=%d" %
+    #   (data_utils.noAct_ID, data_utils.moveAct_ID, data_utils.turnLeft_ID, data_utils.turnRight_ID, data_utils.turnBack_ID))
+    
     if decoder_inputs_positions and decoder_inputs_maps and batch_size:
       position = decoder_inputs_positions[0] # 2d tensor of shape [batch_size, 3]
       _, env = updateEnv(position, None, decoder_inputs_maps)
@@ -223,7 +240,6 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
       if i > 0:
         vs.get_variable_scope().reuse_variables()
       inp = decoder_inputs[i]
-      environments.append(env)
 
       # If loop_function is set, we use it instead of decoder_inputs.
       if loop_function is not None and prev is not None:
@@ -232,6 +248,7 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
 
       # Run the RNN.
       cur_output, new_state = cell(inp, states[-1])
+      cur_output = array_ops.reshape(cur_output, [batch_size, attn_size])
       states.append(new_state)
 
       # Run the attention mechanism.
@@ -245,19 +262,22 @@ def attention_decoder(decoder_inputs, initial_state, attention_states, cell, bat
         # We do not propagate gradients over the loop function.
         prev = array_ops.stop_gradient(output)
       
-      if decoder_inputs_positions[0] and decoder_inputs_maps and position:
-        # update current environment
-        if loop_function is not None:
-          # pdb.set_trace()
+      if decoder_inputs_positions and decoder_inputs_maps and position:
+        
+        # update pos and env
+        if loop_function:
           step = math_ops.argmax(nn_ops.softmax(prev), 1) # step is a list (len=batch_size) of int32 number
           position, env = updateEnv(position, step, decoder_inputs_maps)
         else:
-          position = decoder_inputs_positions[i+1] if (i < len(decoder_inputs_positions) - 1) else position
+          if i < len(decoder_inputs_positions) - 1:
+            position = decoder_inputs_positions[i+1]
           _, env = updateEnv(position, None, decoder_inputs_maps)
 
       outputs.append(output)
+      environments.append(env)
+      positions.append(position)
 
-  return outputs, states, attentions, environments
+  return outputs, states, attentions, environments, positions
 
 
 def embedding_attention_decoder(decoder_inputs, initial_state, attention_states,
@@ -544,6 +564,7 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
   outputs = []
   attentions = []
   environments = []
+  positions = []
   with ops.op_scope(all_inputs, name, "model_with_buckets"):
     for j in xrange(len(buckets)):
       if j > 0:
@@ -557,7 +578,7 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
       bucket_decoder_inputs_maps = decoder_inputs_maps
       
       # pdb.set_trace() #debug
-      bucket_outputs, _, bucket_attentions, bucket_environments\
+      bucket_outputs, _, bucket_attentions, bucket_environments, bucket_positions\
                         = seq2seq(bucket_encoder_inputs,
                                   bucket_decoder_inputs, 
                                   bucket_decoder_inputs_positions,
@@ -565,6 +586,8 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
       outputs.append(bucket_outputs)
       attentions.append(bucket_attentions)
       environments.append(bucket_environments)
+      positions.append(bucket_positions)
+
 
       bucket_targets = [targets[i] for i in xrange(buckets[j][1])]
       bucket_weights = [weights[i] for i in xrange(buckets[j][1])]
@@ -574,4 +597,4 @@ def model_with_buckets(encoder_inputs, decoder_inputs, targets, weights,
           outputs[-1], bucket_targets, bucket_weights, num_decoder_symbols,
           softmax_loss_function=softmax_loss_function))
 
-  return outputs, losses, attentions, environments
+  return outputs, losses, attentions, environments, positions
