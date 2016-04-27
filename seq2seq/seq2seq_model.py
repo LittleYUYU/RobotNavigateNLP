@@ -111,13 +111,13 @@ class Seq2SeqModel(object):
 
     # Training outputs and losses.
     if forward_only:
-      self.outputs, self.losses = seq2seq.model_with_buckets(
+      self.outputs, self.losses, self.attentions, self.environments = seq2seq.model_with_buckets(
           self.encoder_inputs, self.decoder_inputs, targets,
           self.target_weights, buckets, self.target_vocab_size,
           lambda x, y, p, m: seq2seq_f(x, y, p, m, True),
           decoder_inputs_positions=self.decoder_inputs_positions, decoder_inputs_maps=self.decoder_inputs_maps)
     else:
-      self.outputs, self.losses = seq2seq.model_with_buckets(
+      self.outputs, self.losses, self.attentions, self.environments = seq2seq.model_with_buckets(
           self.encoder_inputs, self.decoder_inputs, targets,
           self.target_weights, buckets, self.target_vocab_size,
           lambda x, y, p, m: seq2seq_f(x, y, p, m, False),
@@ -199,13 +199,22 @@ class Seq2SeqModel(object):
       output_feed = [self.losses[bucket_id]]  # Loss for this batch.
       for l in xrange(decoder_size):  # Output logits.
         output_feed.append(self.outputs[bucket_id][l])
-
+      for l in xrange(decoder_size):
+        output_feed.append(self.attentions[bucket_id][l])
+      for l in xrange(decoder_size):
+        output_feed.append(self.environments[bucket_id][l])
+      
     outputs = session.run(output_feed, input_feed)
 
     if not forward_only:
-      return outputs[1], outputs[2], None# Gradient norm, loss, no outputs
+      # Gradient norm, loss, no outputs, no attentions, no environments, no positions
+      return outputs[1], outputs[2], None, None, None
     else:
-      return None, outputs[0], outputs[1:]# No gradient norm, loss, outputs
+      # No gradient norm, loss, outputs, attentions, environment
+      return None, outputs[0], outputs[1:(1+decoder_size)],  \
+        outputs[(1+decoder_size):(1+2*decoder_size)],  \
+        outputs[(1+2*decoder_size):]
+
 
   def get_batch(self, data, bucket_id):
     """Get a random batch of data from the specified bucket, prepare for step.
@@ -234,6 +243,7 @@ class Seq2SeqModel(object):
     for _ in xrange(self.batch_size):
       encoder_input, decoder_input, pos, mapp = random.choice(data[bucket_id])
 
+      # pdb.set_trace()
       # Encoder inputs are padded and then reversed.
       encoder_pad = [data_utils.PAD_ID] * (encoder_size - len(encoder_input))
       encoder_inputs.append(list(reversed(encoder_input + encoder_pad)))
