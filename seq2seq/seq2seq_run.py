@@ -64,6 +64,9 @@ tf.app.flags.DEFINE_boolean("decode_dev", False, "Set to True for decoding devel
 tf.app.flags.DEFINE_boolean("decode_test", False, "Set to True for decoding test set.")
 tf.app.flags.DEFINE_boolean("self_test", False,
                             "Run a self-test if this is set to True.")
+tf.app.flags.DEFINE_string("inter_decode_sent", ".", "Single sentence for interactive decoding.")
+tf.app.flags.DEFINE_string("inter_decode_position", ".", "Initial position for interactive decoding.")
+tf.app.flags.DEFINE_string("inter_decode_map", ".", "map no. for interactive decoding.")
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -337,6 +340,8 @@ def decode():
     print("count = %d, correct = %d, accuracy = %f" % (count, correct, float(correct)/count))
 
 def inter_decode():
+  if not (FLAGS.inter_decode_sent and FLAGS.inter_decode_position and FLAGS.inter_decode_map):
+    raise ValueError(" Invalid argument, please set inter_decode setting! ")
   with tf.Session() as sess:
     # Load dictionary
     srce_vocab_path = os.path.join(FLAGS.data_dir, "train", "vocab%d.srce" % FLAGS.srce_vocab_min)
@@ -349,44 +354,53 @@ def inter_decode():
     model.batch_size = 1  # We decode one sentence at a time.
 
     # Decode from standard input.  ---> interactive decoding
-    sys.stdout.write("> ")
-    sys.stdout.flush()
-    sentence = sys.stdin.readline()
-    while sentence:
-      # read supplement input: children, weight.
-      init_pos = eval(sys.stdin.readline())
-      mapp = eval(sys.stdin.readline())
-      # Get token-ids for the input sentence.
-      token_ids = data_utils.sentence_to_token_ids(sentence, srce_vocab)
-      # Which bucket does it belong to?
-      bucket_id = min([b for b in xrange(len(_buckets))
-                       if _buckets[b][0] > len(token_ids)])
-      # Get a 1-element batch to feed the sentence to the model.
-      # pdb.set_trace()
-      encoder_input, decoder_input, target_weight, pos, maps = model.get_batch(
-          {bucket_id: [(token_ids, [], init_pos, mapp)]}, bucket_id)
-      # Get output logits for the sentence.
-      _, _, output_logits, attentions, env, out_pos = model.step(sess, encoder_input, decoder_input, target_weight, bucket_id, True, 
-                  decoder_inputs_positions=pos, decoder_inputs_maps=maps)
-      # This is a greedy decoder - outputs are just argmaxes of output_logits.
-      outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
-      
-      # If there is an EOS symbol in outputs, cut them at that point.
-      # if data_utils.EOS_ID in outputs:
-      #   outputs = outputs[:outputs.index(data_utils.EOS_ID)]
-      
+    # sys.stdout.write("> ")
+    # sys.stdout.flush()
+    # sentence = sys.stdin.readline()
+    sentence = FLAGS.inter_decode_sent
+    # while sentence:
 
-      # print predicted result
-      print ("predict: ", data_utils.token_ids_to_sentence(outputs, re_trgt_vocab))
-      for l in xrange(len(outputs)):
-        print (l, '\t', re_trgt_vocab[outputs[l]])
-        print ("attention weight: ", attentions[l])
-        print ("environment: ", env[l])
-        print ("output position: ", out_pos[l], '\n')
+    # read supplement input: children, weight.
+    # init_pos = eval(sys.stdin.readline())
+    # mapp = eval(sys.stdin.readline())
+    init_pos = eval(FLAGS.inter_decode_position)
+    mapp = eval(FLAGS.inter_decode_map)
 
-      print("> ", end="")
-      sys.stdout.flush()
-      sentence = sys.stdin.readline()
+    # Get token-ids for the input sentence.
+    token_ids = data_utils.sentence_to_token_ids(sentence, srce_vocab)
+    # Which bucket does it belong to?
+    bucket_id = min([b for b in xrange(len(_buckets))
+                     if _buckets[b][0] > len(token_ids)])
+    # Get a 1-element batch to feed the sentence to the model.
+    # pdb.set_trace()
+    encoder_input, decoder_input, target_weight, pos, maps = model.get_batch(
+        {bucket_id: [(token_ids, [], init_pos, mapp)]}, bucket_id)
+    # Get output logits for the sentence.
+    _, _, output_logits, attentions, env, out_pos = model.step(sess, encoder_input, decoder_input, target_weight, bucket_id, True, 
+                decoder_inputs_positions=pos, decoder_inputs_maps=maps)
+    # This is a greedy decoder - outputs are just argmaxes of output_logits.
+    outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
+    
+    # If there is an EOS symbol in outputs, cut them at that point.
+    if data_utils.EOS_ID in outputs:
+      outputs = outputs[:outputs.index(data_utils.EOS_ID)]
+    
+    final_pos = out_pos[0].tolist()
+    for l in xrange(len(outputs)-1):
+      final_pos.extend(out_pos[l+1].tolist())
+
+    return final_pos
+    # # print predicted result
+    # print ("Action: ", data_utils.token_ids_to_sentence(outputs, re_trgt_vocab))
+    # for l in xrange(len(outputs)):
+    # #   print (l, '\t', re_trgt_vocab[outputs[l]])
+    # #   print ("attention weight: ", attentions[l])
+    # #   print ("environment: ", env[l])
+    #   print ("output position: ", out_pos[l], '\n')
+
+    # print("> ", end="")
+    # sys.stdout.flush()
+    # sentence = sys.stdin.readline()
 
 
 def self_test():
