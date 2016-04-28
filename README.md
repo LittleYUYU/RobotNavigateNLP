@@ -63,9 +63,9 @@ python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --b
 ### Decode
 #### Interactive decode
 ```
-python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --data_dir="../data/data0" --inter_decode=True --batch_size=1
+python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --data_dir="../data/data0" --inter_decode=True --batch_size=1 --inter_decode_sent="string_of_instruction" --inter_decode_position="[[1,7,2]]" --inter_decode_map="0"
 ```
 #### Decode for testing
 ```
-python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --data_dir="../data/data0" --decode=True --decode_dev=True(or --decode_test=True) --batch_size=1 --inter_decode_sent="string_of_instruction" --inter_decode_position="[[1,7,2]]" --inter_decode_map=0/1/2
+python seq2seq_run.py --size --learning_rate --keep_prob --epoch --num_layer --data_dir="../data/data0" --decode=True --decode_dev=True(or --decode_test=True) --batch_size=1 
 ```
