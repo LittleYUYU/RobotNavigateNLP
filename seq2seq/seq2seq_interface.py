@@ -32,7 +32,10 @@ def create_model(session, srce_vocab_size, trgt_vocab_size, forward_only):
     raise ValueError(" Invalid arguments! Fails on creating models! ")
   return model
 
+def test():
+  return 'test'
 
+# "sentence", "[[x,y,d]]", "0"
 def inter_decode(sent, position, mapp):
   with tf.Session() as sess:
     # Load dictionary
