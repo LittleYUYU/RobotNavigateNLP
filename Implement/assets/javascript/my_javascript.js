@@ -19,9 +19,11 @@ function draw_rect(node){
 
 function draw_arrow(x, y) {
     $("#start")[0].innerText = x +","+  y;
+
     canvas = $("#map")[0];
     var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     map_name = $("#map_select")[0].value;
     draw_map(map_name);
     var d = map_name == "map_grid" ? 0 : 406;
@@ -326,6 +328,9 @@ function getPosition(event)
             alert("start point invalid!");
         }
         else {
+            canvas = $("#map")[0];
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             draw_arrow(x, y);
         }
     });

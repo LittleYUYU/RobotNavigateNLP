@@ -28,6 +28,7 @@ def current_datetime(request):
 
 def judge(request):
     instruction = request.GET['instruction']
+    gggg()
     return HttpResponse(instruction)
 
 def search(request, keyword):
