@@ -24,8 +24,7 @@ function draw_arrow(x, y) {
     var ctx = canvas.getContext('2d');
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    map_name = $("#map_select")[0].value;
-    draw_map(map_name);
+
     var d = map_name == "map_grid" ? 0 : 406;
     x = x * 30 - d - 9;
     y = y * 30 - d - 24;
@@ -331,6 +330,8 @@ function getPosition(event)
             canvas = $("#map")[0];
             var ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            map_name = $("#map_select")[0].value;
+            draw_map(map_name);
             draw_arrow(x, y);
         }
     });
@@ -352,10 +353,13 @@ $(document).ready(function(){
     });
 
     $("#judge").click(function(){
-        var start_point = $("#start")[0].innerText.split(',');
+        var position = $("#start")[0].innerText;//.split(',');
         var instruction = $("#instruction").val();
-        $.get("/judge/",{'instruction':instruction}, function(ret){
-            $('#result').html(ret)
+        var direction = $("#direction").val();
+        $.get("/judge/",{'instruction':instruction, 'position':position, 'direction':direction}, function(ret){
+            $('#result').html(ret);
+            var ins = eva(ret);
+            dr
         });
     });
     $('#dict').click(function(){

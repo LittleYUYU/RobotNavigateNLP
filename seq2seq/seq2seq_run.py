@@ -43,11 +43,11 @@ tf.app.flags.DEFINE_float("learning_rate_decay_factor", 0.95,
                           "Learning rate decays by this much.")
 tf.app.flags.DEFINE_float("max_gradient_norm", 5.0,
                           "Clip gradients to this norm.")
-tf.app.flags.DEFINE_integer("batch_size", 50,
+tf.app.flags.DEFINE_integer("batch_size", 50, 
                             "Batch size to use during training.")
 tf.app.flags.DEFINE_integer("size", 100, "Size of each model layer.")
 tf.app.flags.DEFINE_integer("state_size", 74, "Size of environment representation.")
-tf.app.flags.DEFINE_integer("num_layers", 1, "Number of layers in the model.")
+tf.app.flags.DEFINE_integer("num_layers", 2, "Number of layers in the model.")
 tf.app.flags.DEFINE_integer("srce_vocab_min", 2, "source vocabulary threshold.")
 tf.app.flags.DEFINE_integer("trgt_vocab_min", 0, "target vocabulary threshold.")
 tf.app.flags.DEFINE_string("data_dir", ".", "Data directory for training.")
@@ -358,13 +358,13 @@ def inter_decode():
     # sys.stdout.flush()
     # sentence = sys.stdin.readline()
     sentence = FLAGS.inter_decode_sent
-    # while sentence:
 
     # read supplement input: children, weight.
     # init_pos = eval(sys.stdin.readline())
     # mapp = eval(sys.stdin.readline())
     init_pos = eval(FLAGS.inter_decode_position)
     mapp = eval(FLAGS.inter_decode_map)
+
 
     # Get token-ids for the input sentence.
     token_ids = data_utils.sentence_to_token_ids(sentence, srce_vocab)
@@ -425,7 +425,7 @@ def self_test():
       bucket_id = random.choice([0, 1])
       encoder_inputs, decoder_inputs, target_weights, positions, maps = model.get_batch(
           data_set, bucket_id)
-      _, loss, _, _, _= model.step(sess, encoder_inputs, decoder_inputs, target_weights, bucket_id, False, decoder_inputs_positions=positions, 
+      _, loss, _, _, _, _= model.step(sess, encoder_inputs, decoder_inputs, target_weights, bucket_id, False, decoder_inputs_positions=positions, 
         decoder_inputs_maps=maps)
 
 

@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import datetime
 import json
+import sys, os
+sys.path.append('../seq2seq')
+# import seq2seq_interface
 
 def add(request):
     a = request.GET['a']
@@ -28,8 +31,13 @@ def current_datetime(request):
 
 def judge(request):
     instruction = request.GET['instruction']
-    gggg()
-    return HttpResponse(instruction)
+    position = request.GET['position'] #"[[23,17,0]]"
+    direction = request.GET['direction'] 
+    # result = seq2seq_interface.inter_decode(instruction, position, direction)
+    # result = seq2seq_interface.test()
+    result = instruction+position+direction
+    print(result)
+    return HttpResponse(result)
 
 def search(request, keyword):
     if request.session.get('UserID', False):
