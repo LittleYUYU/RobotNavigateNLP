@@ -1,0 +1,6 @@
+model_checkpoint_path: "../data/data1/checkpoint/ckpt-504"
+all_model_checkpoint_paths: "../data/data1/checkpoint/ckpt-84"
+all_model_checkpoint_paths: "../data/data1/checkpoint/ckpt-168"
+all_model_checkpoint_paths: "../data/data1/checkpoint/ckpt-336"
+all_model_checkpoint_paths: "../data/data1/checkpoint/ckpt-420"
+all_model_checkpoint_paths: "../data/data1/checkpoint/ckpt-504"
